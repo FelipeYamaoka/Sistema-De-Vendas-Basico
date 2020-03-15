@@ -1,20 +1,25 @@
 package Model;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class Conexao {
+    /*private Connection conn;
+    private Statement st;
+    private ResultSet rs;*/
 
+    //public static Connection conectar() {
     public static Connection conectar() {
-
         try {
-            //class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/db_sistemadevendas?zeroDateTimeBehavior=convertToNull [root em Esquema default]";
-            Connection conn = DriverManager.getConnection(url, "root", "");
+            Class.forName("com.mysql.jdbc.Driver");  
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_sistemadevendas","root","");  
+            System.out.println("Connected");
             return conn;
-        } catch (SQLException e) {
-            // do something appropriate with the exception, *at least*:
+        }
+        catch(Exception ex) {
+            System.out.println("Error: "+ex);
+            System.out.println("Not Connected");
             return null;
         }
     }
-
 }

@@ -4,11 +4,12 @@ import Model.Pessoa;
 import Model.Conexao;
 import java.sql.*;
 
-public class DaoPessoa {
+//Adicionei ClassNotFoundException nas classes CRUD
 
-    public void Insert() throws SQLException {
+public class DaoPessoa {
+    
+    public void Insert(Pessoa pessoa) throws SQLException {
             
-        Pessoa pessoa = new Pessoa();
         Connection conn = Conexao.conectar();
         PreparedStatement query = null;
         
@@ -16,25 +17,26 @@ public class DaoPessoa {
            
             String sql = "INSERT INTO tbpessoa(TIP_IN_COD, PES_ST_NOME, PES_ST_APELIDO, PES_ST_DESCRICAO, PES_ST_ENDERECO, "
                     + "PES_ST_BAIRRO, PES_ST_NUMERO, PES_ST_CIDADE, PES_ST_UF, PES_ST_CEP, PES_ST_FONE, PES_ST_NUMEROREGISTRO) "
-                    + "VALUES ('" + pessoa.getTIP_IN_COD() + "', "
-                    + "'" + pessoa.getPES_ST_NOME() + "', "
-                    + "'" + pessoa.getPES_ST_APELIDO() + "', "
-                    + "'" + pessoa.getPES_ST_DESCRICAO() + "', "
-                    + "'" + pessoa.getPES_ST_ENDERECO() + "', "
-                    + "'" + pessoa.getPES_ST_BAIRRO() + "', "
-                    + "'" + pessoa.getPES_ST_NUMERO() + "', "
-                    + "'" + pessoa.getPES_ST_CIDADE() + "', "
-                    + "'" + pessoa.getPES_ST_UF() + "', "
-                    + "'" + pessoa.getPES_ST_CEP() + "', "
-                    + "'" + pessoa.getPES_ST_FONE() + "', "
-                    + "'" + pessoa.getPES_ST_NUMEROREGISTRO() + "')";
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
             query = conn.prepareStatement(sql);
-            query.execute();
+            query.setInt(1, pessoa.getTIP_IN_COD());
+            query.setString(2, pessoa.getPES_ST_NOME());
+            query.setString(3, pessoa.getPES_ST_APELIDO());
+            query.setString(4, pessoa.getPES_ST_DESCRICAO());
+            query.setString(5, pessoa.getPES_ST_ENDERECO());
+            query.setString(6, pessoa.getPES_ST_BAIRRO());
+            query.setString(7, pessoa.getPES_ST_NUMERO());
+            query.setString(8, pessoa.getPES_ST_CIDADE());
+            query.setString(9, pessoa.getPES_ST_UF());
+            query.setString(10, pessoa.getPES_ST_CEP());
+            query.setString(11, pessoa.getPES_ST_FONE());
+            query.setString(12, pessoa.getPES_ST_NUMEROREGISTRO());
+            query.executeUpdate();
             
-        } catch (SQLException e) {
-            // do something appropriate with the exception, *at least*:
-
+    
+        } catch (SQLException ex) {
+            System.out.println("Função Insert Pessoa - Erro "+ex);
         } finally {query.close();}
     }
     
@@ -129,6 +131,30 @@ public class DaoPessoa {
             
         } catch (SQLException e) {
             
+        } finally {query.close();}
+    }
+    
+    public String MaxID() throws SQLException {
+        Connection conn = Conexao.conectar();
+        PreparedStatement query = null;
+        ResultSet rs = null;
+        
+        try {
+            //Connection conn = Conexao.conectar();
+            String sql = ("SELECT MAX(PES_IN_ID) + 1 FROM tbpessoa");
+            query = conn.prepareStatement(sql);
+            rs = query.executeQuery();
+            String retorno = null;
+            
+            while(rs.next() )
+            {
+                retorno = rs.getString(1);
+            }
+         
+            return retorno;
+        } catch (Exception ex) {
+            System.out.println("Função MaxId - Erro "+ex);
+            return null;
         } finally {query.close();}
     }
 }
